@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poster - Student Performance Prediction</title>
+    <!-- Google Fonts for modern aesthetics -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2563eb;    /* Blue */
+            --secondary: #7c3aed;  /* Purple */
+            --tertiary: #0d9488;   /* Teal */
+            --bg-color: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #475569;
+        }
+
+        @page {
+            size: A3 portrait;
+            margin: 0;
+        }
+
+        body {
+            background-color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .a3-poster {
+            width: 297mm;
+            height: 420mm;
+            background: linear-gradient(135deg, #ffffff 0%, var(--bg-color) 100%);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+            padding: 12mm;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5mm;
+        }
+
+        /* Abstract Background Decor for Premium Look */
+        .bg-decor {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(124,58,237,0.06) 0%, rgba(255,255,255,0) 70%);
+            top: -150px;
+            right: -200px;
+            z-index: 0;
+        }
+        .bg-decor-2 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(37,99,235,0.06) 0%, rgba(255,255,255,0) 70%);
+            bottom: -50px;
+            left: -150px;
+            z-index: 0;
+        }
+
+        .content-z {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header Section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 3px solid #e2e8f0;
+            padding-bottom: 6mm;
+        }
+        .header-content h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 29pt;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0 0 8px 0;
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+        .header-content h2 {
+            font-size: 12pt;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .header-meta {
+            text-align: right;
+            font-size: 12pt;
+            color: var(--text-muted);
+            line-height: 1.4;
+            background: white;
+            padding: 3mm 5mm;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .header-meta strong {
+            color: var(--text-main);
+            font-size: 10pt;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* Grid Layout */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-auto-rows: min-content;
+            gap: 2.5mm;
+            flex-grow: 1;
+            align-content: space-between;
+        }
+        
+        .col-span-2 {
+            grid-column: span 2;
+        }
+
+        /* Standard Cards */
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 5mm 8mm;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(0,0,0,0.03);
+            border-top: 6px solid var(--primary);
+        }
+        .card.teal { border-top-color: var(--tertiary); }
+        .card.purple { border-top-color: var(--secondary); }
+        .card.blue { border-top-color: var(--primary); }
+        
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 13pt;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 3.5mm;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-title svg {
+            width: 28px;
+            height: 28px;
+        }
+        .teal .card-title svg { color: var(--tertiary); }
+        .purple .card-title svg { color: var(--secondary); }
+        .blue .card-title svg { color: var(--primary); }
+
+        .card-body {
+            font-size: 12pt;
+            color: var(--text-muted);
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+        
+        /* Lists Formatting */
+        ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 6px;
+        }
+        li::marker {
+            color: var(--primary);
+        }
+
+        /* Pipeline Diagram */
+        .pipeline-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 3mm;
+            border: 1px dashed #cbd5e1;
+            margin-top: 2mm;
+        }
+        .pipe-node {
+            background: white;
+            border: 2px solid var(--primary);
+            padding: 2.5mm 1.5mm;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 10pt;
+            color: var(--text-main);
+            text-align: center;
+            flex: 1;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        .pipe-node.highlight {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .pipe-arrow {
+            color: #94a3b8;
+            font-size: 10pt;
+            margin: 0 1.5mm;
+            font-weight: bold;
+        }
+
+        /* Metrics Boxes */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5mm;
+        }
+        .metric-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 3mm;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        .metric-value {
+            font-size: 19pt;
+            font-weight: 800;
+            color: var(--tertiary);
+            font-family: 'Outfit', sans-serif;
+            line-height: 1.2;
+        }
+        .metric-label {
+            font-size: 10pt;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 2px;
+        }
+
+        /* Tech Stack Tags */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2.5mm;
+        }
+        .tag {
+            padding: 1.5mm 3.5mm;
+            border-radius: 999px;
+            font-size: 10pt;
+            font-weight: 600;
+        }
+        .tag.blue { background: #dbeafe; color: #1e40af; }
+        .tag.teal { background: #ccfbf1; color: #0f766e; }
+        .tag.purple { background: #f3e8ff; color: #6b21a8; }
+
+        /* Performance Bar Chart */
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5mm;
+            margin-top: 3mm;
+        }
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 2.5mm;
+        }
+        .bar-label {
+            width: 80px;
+            font-size: 10pt;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .bar-track {
+            flex-grow: 1;
+            height: 9px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 5px;
+        }
+
+        /* Footer & QR Section */
+        .footer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            border-top: 2px solid #e2e8f0;
+            padding-top: 3.5mm;
+        }
+        .footer-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 13pt;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+        
+        .qr-section {
+            display: flex;
+            align-items: center;
+            gap: 2.5mm;
+            background: white;
+            padding: 3mm;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+        }
+        .qr-code {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+        }
+        .qr-text {
+            font-size: 10pt;
+            color: var(--text-muted);
+            font-weight: 600;
+            max-width: 140px;
+            line-height: 1.4;
+        }
+
+        /* Print Specific Adjustments */
+        @media print {
+            body { background: white; padding: 0; }
+            .a3-poster { margin: 0; box-shadow: none; width: 297mm; height: 420mm; page-break-after: avoid; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="a3-poster">
+    <!-- Decorative Accents -->
+    <div class="bg-decor"></div>
+    <div class="bg-decor-2"></div>
+
+    <!-- 1. Header Section -->
+    <div class="header content-z">
+        <div class="header-content">
+            <h1>Student Performance Prediction System</h1>
+            <h2>Machine Learning-Based Web Application</h2>
+        </div>
+        <div class="header-meta" style="text-align: right; line-height: 1.4;">
+            <div style="font-weight: 700; color: var(--text-main); font-size: 12pt;">Team Members:</div>
+            <div><strong style="display:inline;">Harsh Aditya</strong> (202401100200148)</div>
+            <div><strong style="display:inline;">Harsh Srivastava</strong> (202401100200150)</div>
+            <div style="margin-top: 2px;">B.Tech CSE | Sec: C</div>
+            <div>KIET Group of Institutions</div>
+        </div>
+    </div>
+
+    <div class="grid-container content-z">
+        
+        <!-- 2. Introduction -->
+        <div class="card blue">
+            <div class="card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                </svg>
+                Introduction
+            </div>
+            <div class="card-body" style="display: flex; gap: 2.5mm;">
+                <div style="flex: 1;">
+                    This project predicts student performance using machine learning models by analyzing multiple academic, social, and personal lifestyle factors.<br><br>
+                    It is designed directly to evaluate final grades, providing actionable insights for early educational interventions and targeted student success strategies.
+                </div>
+                <div>
+                    <img src="ml_education_illustration.png" alt="ML Education Illustration" style="width: 110px; height: 110px; border-radius: 12px; object-fit: cover; border: 2px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Dataset Information -->
+        <div class="card teal">
+            <div class="card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+                </svg>
+                Dataset Information
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li><strong>Source:</strong> UCI Student Performance Dataset</li>
+                    <li><strong>Target Variable:</strong> Final Grade (G3)</li>
+                    <li><strong>Data Availability:</strong> 395 student records</li>
+                    <li><strong>Features (30+ combined):</strong> Encompasses daily demographics, study time, absences, family background, and previous academic grades (G1, G2).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 4. Methodology (Pipeline Diagram) -->
+        <div class="card purple col-span-2">
+            <div class="card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+                </svg>
+                Methodology & Machine Learning Pipeline
+            </div>
+            <div class="card-body" style="display:flex; align-items:center;">
+                <div class="pipeline-wrapper" style="width:100%;">
+                    <div class="pipe-node">Input<br>Data</div>
+                    <div class="pipe-arrow">➔</div>
+                    <div class="pipe-node">EDA &<br>Analysis</div>
+                    <div class="pipe-arrow">➔</div>
+                    <div class="pipe-node">Data<br>Cleaning</div>
+                    <div class="pipe-arrow">➔</div>
+                    <div class="pipe-node">Feature<br>Selection</div>
+                    <div class="pipe-arrow">➔</div>
+                    <div class="pipe-node">Model<br>Training</div>
+                    <div class="pipe-arrow">➔</div>
+                    <div class="pipe-node">Model<br>Evaluation</div>
+                    <div class="pipe-arrow">➔</div>
+                    <div class="pipe-node highlight">Prediction<br>Output</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Models Used -->
+        <div class="card blue">
+            <div class="card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z" />
+                </svg>
+                Models Used
+            </div>
+            <div class="card-body">
+                Two robust regression models were implemented and extensively compared to predict the continuous target score efficiently:
+                <ul style="margin-top: 10px;">
+                    <li><strong>Linear Regression:</strong> establishes baseline linear relationships between student capabilities and final outcomes.</li>
+                    <li><strong>Decision Tree Regressor:</strong> effectively captures complex interactions and non-linear patterns.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 6. Evaluation Metrics -->
+        <div class="card teal">
+            <div class="card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                </svg>
+                Evaluation Metrics
+            </div>
+            <div class="card-body">
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <div class="metric-value">R²</div>
+                        <div class="metric-label">Score Metrics</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-value">MAE</div>
+                        <div class="metric-label">Mean Abs Error</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-value">MSE</div>
+                        <div class="metric-label">Mean Sq Error</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-value" style="color: var(--primary);">5-Fold</div>
+                        <div class="metric-label">Cross Validation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Key Features -->
+        <div class="card purple">
+            <div class="card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                </svg>
+                Key Features
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li><strong>Real-time Prediction:</strong> Instant grade estimation via custom user inputs.</li>
+                    <li><strong>Model Comparison:</strong> Dynamic toggling between models to compare metrics.</li>
+                    <li><strong>Interactive UI:</strong> Built with Streamlit for a fully seamless web experience.</li>
+                    <li><strong>End-to-end ML Architecture:</strong> Full pipeline implemented from raw data ingestion to web app deployment.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 8. Results / Output -->
+        <div class="card blue">
+            <div class="card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
+                </svg>
+                Results / Output
+            </div>
+            <div class="card-body">
+                <div style="font-size: 12pt; margin-bottom: 3.5mm;">
+                    <strong>Predicted Target Output:</strong> Final Grade (Scale 0–20)
+                </div>
+                <div style="font-weight: 600; color: var(--text-main); margin-bottom: 1mm;">Performance Threshold Categories:</div>
+                <div class="bar-chart">
+                    <div class="bar-item">
+                        <div class="bar-label">Excellent</div>
+                        <div class="bar-track"><div class="bar-fill" style="width: 35%; background: #10b981;"></div></div>
+                    </div>
+                    <div class="bar-item">
+                        <div class="bar-label">Good</div>
+                        <div class="bar-track"><div class="bar-fill" style="width: 50%; background: #3b82f6;"></div></div>
+                    </div>
+                    <div class="bar-item">
+                        <div class="bar-label">Sufficient</div>
+                        <div class="bar-track"><div class="bar-fill" style="width: 25%; background: #f59e0b;"></div></div>
+                    </div>
+                    <div class="bar-item">
+                        <div class="bar-label">At Risk</div>
+                        <div class="bar-track"><div class="bar-fill" style="width: 15%; background: #ef4444;"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. & 10. Tech Stack and QR Code (Row 5 Content) -->
+        <div class="card teal col-span-2" style="padding: 5mm 8mm; border: 1px solid rgba(0,0,0,0.05); background: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="flex: 1;">
+                    <div class="card-title" style="margin-bottom: 3mm; font-size: 12pt;">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 26px; height: 26px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+                        </svg>
+                        Technology Stack
+                    </div>
+                    <div class="tags">
+                        <div class="tag blue">Python</div>
+                        <div class="tag teal">Pandas & NumPy</div>
+                        <div class="tag purple">Scikit-learn</div>
+                        <div class="tag blue">Streamlit</div>
+                        <div class="tag teal">Matplotlib & Seaborn</div>
+                    </div>
+                </div>
+                
+                <div class="qr-section">
+                    <div>
+                        <!-- Embedded QR code using API linked to Streamlit app -->
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://pipelinepy-rappgmthaezsutykfb3avtd.streamlit.app/&color=1e293b" alt="App QR Code" class="qr-code">
+                    </div>
+                    <div class="qr-text">
+                        Scan to Access the<br>Live Application
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- End grid -->
+
+    <!-- 11. Footer -->
+    <div class="footer-row content-z">
+        <div class="footer-text">Machine Learning Project | 2026</div>
+        <div class="footer-text" style="font-weight: 400; color: #cbd5e1;">Presented dynamically via ML Pipeline</div>
+    </div>
+</div>
+
+</body>
+</html>
