@@ -97,6 +97,7 @@ st.sidebar.markdown("**Features:** 32 input features")
 st.sidebar.markdown("**Target:** G3 – Final Grade (0–20)")
 st.sidebar.markdown("**Models:** Decision Tree, Linear Regression")
 st.sidebar.markdown("**Validation:** K-Fold CV (k=5)")
+st.sidebar.markdown("**Tip:** Open the Model Evaluation page to access the dedicated Comparative Analysis section.")
 
 # ─────────────────────────────────────────────
 # 7. Route to the Correct Page

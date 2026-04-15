@@ -106,6 +106,7 @@ The model uses 32 features, including:
 - Per-model metrics and fold-wise CV scores
 - Side-by-side performance comparison
 - Best model based on CV mean R²
+- Dedicated Comparative Analysis section for Decision Tree vs Linear Regression
 
 ## 6. Prediction Input / Output
 

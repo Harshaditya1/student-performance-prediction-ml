@@ -63,7 +63,69 @@ def render(X, y, results: dict, X_train, X_test):
         "MSE":         [f"{r['mse']:.4f}"     for r in results.values()],
         "CV Mean R²":  [f"{r['cv_mean']:.4f}" for r in results.values()],
     })
-    st.dataframe(comp, use_container_width=True, hide_index=True)
+    st.dataframe(comp, width="stretch", hide_index=True)
+
+    # ── Comparative Analysis ─────────────────────────────────────────────────
+    st.header("Comparative Analysis")
+    st.write(
+        "This section compares Decision Tree and Linear Regression with test-set metrics "
+        "and cross-validation performance. Scroll down for the summary, difference table, "
+        "and visual comparison."
+    )
+    if "Decision Tree" in results and "Linear Regression" in results:
+        dt = results["Decision Tree"]
+        lr = results["Linear Regression"]
+
+        comp_analysis = pd.DataFrame(
+            {
+                "Decision Tree":    [dt["r2"], dt["mae"], dt["mse"], dt["cv_mean"]],
+                "Linear Regression": [lr["r2"], lr["mae"], lr["mse"], lr["cv_mean"]],
+            },
+            index=["R² (test)", "MAE", "MSE", "CV Mean R²"],
+        )
+
+        st.markdown("#### Metric Comparison")
+        comp_display = comp_analysis.round(4).astype(str)
+        st.dataframe(comp_display, width="stretch")
+
+        diff = {
+            "R² Difference": dt["r2"] - lr["r2"],
+            "MAE Difference": dt["mae"] - lr["mae"],
+            "MSE Difference": dt["mse"] - lr["mse"],
+            "CV Mean R² Difference": dt["cv_mean"] - lr["cv_mean"],
+        }
+        diff_df = pd.DataFrame(diff, index=["Decision Tree - Linear Regression"]).T
+        diff_df.columns = ["Difference"]
+
+        st.markdown("#### Performance Differences")
+        diff_display = diff_df.round(4).astype(str)
+        st.dataframe(diff_display, width="stretch")
+
+        better_values = []
+        if dt["cv_mean"] > lr["cv_mean"]:
+            better_values.append("Decision Tree has a higher CV mean R²")
+        else:
+            better_values.append("Linear Regression has a higher CV mean R²")
+
+        if dt["mae"] < lr["mae"]:
+            better_values.append("Decision Tree has a lower MAE")
+        else:
+            better_values.append("Linear Regression has a lower MAE")
+
+        if dt["mse"] < lr["mse"]:
+            better_values.append("Decision Tree has a lower MSE")
+        else:
+            better_values.append("Linear Regression has a lower MSE")
+
+        st.markdown("#### Summary")
+        for statement in better_values:
+            st.write(f"- {statement}")
+
+        chart_data = comp_analysis.loc[["R² (test)", "CV Mean R²"]].T
+        st.markdown("#### Visual Comparison")
+        st.bar_chart(chart_data)
+    else:
+        st.info("Comparative analysis is only available when both models are trained.")
 
     # ── Best Model ────────────────────────────────────────────────────────────
     best = max(results.items(), key=lambda kv: kv[1]["cv_mean"])

@@ -47,11 +47,11 @@ def render(df: pd.DataFrame, encoders: dict):
         "Type":         [str(d) for d in df.dtypes],
         "Sample Value": [str(df[c].iloc[0]) for c in df.columns],
     })
-    st.dataframe(dtype_df, use_container_width=True, hide_index=True)
+    st.dataframe(dtype_df, width="stretch", hide_index=True)
 
     # ── Numeric Summary Statistics ───────────────────────────────────────────
     st.markdown('<div class="section-header">Numeric Summary Statistics</div>', unsafe_allow_html=True)
-    st.dataframe(df.describe().round(2), use_container_width=True)
+    st.dataframe(df.describe().round(2), width="stretch")
 
     # ── Label Encoding Reference ─────────────────────────────────────────────
     st.markdown('<div class="section-header">Label Encoding Applied To</div>', unsafe_allow_html=True)
@@ -62,11 +62,11 @@ def render(df: pd.DataFrame, encoders: dict):
             "Original Values": str(le.classes_.tolist()),
             "Encoded As":      str(list(range(len(le.classes_)))),
         })
-    st.dataframe(pd.DataFrame(enc_rows), use_container_width=True, hide_index=True)
+    st.dataframe(pd.DataFrame(enc_rows), width="stretch", hide_index=True)
 
     # ── Sample Raw Records ───────────────────────────────────────────────────
     st.markdown('<div class="section-header">Sample Records (raw)</div>', unsafe_allow_html=True)
-    st.dataframe(df.head(10), use_container_width=True, hide_index=True)
+    st.dataframe(df.head(10), width="stretch", hide_index=True)
 
     # ── Grade Distribution Chart ─────────────────────────────────────────────
     st.markdown('<div class="section-header">Target Variable Distribution (G3)</div>', unsafe_allow_html=True)

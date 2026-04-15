@@ -110,9 +110,9 @@ def render(results: dict, encoders: dict):
         G2 = rGc2.slider("Second Period Grade – G2 (0–20)", 0, 20, 10)
 
         # ── Model Selector & Submit ──────────────────────────────────────────
-        model_choice = st.selectbox("🧠 Choose Prediction Model", list(results.keys()))
+        model_choice = st.selectbox("🧠 Choose Primary Prediction Model", list(results.keys()))
         submitted = st.form_submit_button(
-            "🔮 Predict Final Grade", type="primary", use_container_width=True
+            "🔮 Predict Final Grade", type="primary", width="stretch"
         )
 
     # ════════════════════════════════════════════════════════════════════════
@@ -146,23 +146,59 @@ def render(results: dict, encoders: dict):
         ]
 
         input_arr = np.array([input_values])
-        raw_pred  = results[model_choice]["model"].predict(input_arr)[0]
-        pred      = max(0.0, min(20.0, round(raw_pred, 2)))   # clamp to valid range
-        cv_mean   = results[model_choice]["cv_mean"]
+        predictions = {
+            name: max(0.0, min(20.0, round(res["model"].predict(input_arr)[0], 2)))
+            for name, res in results.items()
+        }
 
-        label, text_col, bg_col = grade_label(pred)
+        best_model = max(results.items(), key=lambda kv: kv[1]["cv_mean"])[0]
+        selected_pred = predictions[model_choice]
+        selected_cv   = results[model_choice]["cv_mean"]
+        selected_label, selected_text_col, selected_bg_col = grade_label(selected_pred)
 
-        # ── Display Prediction Box ──────────────────────────────────────────
+        # ── Selected Model Prediction Box ────────────────────────────────────
         st.markdown(f"""
-        <div class="prediction-box" style="background:{bg_col}; border: 2px solid {text_col};">
+        <div class="prediction-box" style="background:{selected_bg_col}; border: 2px solid {selected_text_col};">
             <div class="prediction-label">Predicted Final Grade G3 &nbsp;|&nbsp; {model_choice}</div>
-            <div class="prediction-value" style="color:{text_col};">{pred:.1f} / 20</div>
-            <span class="grade-badge" style="background:{text_col}; color:#fff;">{label}</span>
+            <div class="prediction-value" style="color:{selected_text_col};">{selected_pred:.1f} / 20</div>
+            <span class="grade-badge" style="background:{selected_text_col}; color:#fff;">{selected_label}</span>
             <div style="font-size:0.82rem; color:#555; margin-top:10px;">
-                Model CV R² Score (k=5): <b>{cv_mean:.4f}</b>
+                Model CV Mean R² (k=5): <b>{selected_cv:.4f}</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
+
+        # ── Comparative Output Table ─────────────────────────────────────────
+        st.markdown("---")
+        st.markdown("### 🔍 Comparative Prediction Analysis")
+        comparison_df = pd.DataFrame({
+            "Model": list(predictions.keys()),
+            "Predicted G3": [f"{pred:.2f}" for pred in predictions.values()],
+            "Grade Category": [grade_label(pred)[0] for pred in predictions.values()],
+            "CV Mean R²": [f"{results[name]['cv_mean']:.4f}" for name in predictions.keys()],
+        })
+        st.dataframe(comparison_df, width="stretch", hide_index=True)
+
+        dt_pred = predictions.get("Decision Tree")
+        lr_pred = predictions.get("Linear Regression")
+        if dt_pred is not None and lr_pred is not None:
+            diff = dt_pred - lr_pred
+            if diff > 0:
+                diff_text = f"Decision Tree predicts {diff:.2f} points higher than Linear Regression."
+            elif diff < 0:
+                diff_text = f"Linear Regression predicts {abs(diff):.2f} points higher than Decision Tree."
+            else:
+                diff_text = "Both models predict the same final grade for this input."
+
+            st.markdown("#### Comparison Summary")
+            st.write(f"- Primary selected model: **{model_choice}**")
+            st.write(f"- Current best model by cross-validation: **{best_model}**")
+            st.write(f"- {diff_text}")
+
+            chart_df = pd.DataFrame({
+                "Predicted G3": [dt_pred, lr_pred],
+            }, index=["Decision Tree", "Linear Regression"])
+            st.bar_chart(chart_df)
 
         # ── Input Summary Table ─────────────────────────────────────────────
         st.markdown("---")
@@ -177,6 +213,6 @@ def render(results: dict, encoders: dict):
         ]
         summary_df = pd.DataFrame({
             "Feature": list(COL_LABELS.values()),
-            "Value":   raw_values,
+            "Value":   [str(value) for value in raw_values],
         })
-        st.dataframe(summary_df, use_container_width=False, hide_index=True)
+        st.dataframe(summary_df, width="stretch", hide_index=True)
